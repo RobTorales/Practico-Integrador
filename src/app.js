@@ -1,9 +1,7 @@
 import express from "express";
 import __dirname from "./utils.js";
-import expressHandlebars from "express-handlebars";
-import Handlebars from "handlebars";
-import viewRouter from "./routes/view.router.js";
-import { allowInsecurePrototypeAccess } from '@handlebars/allow-prototype-access'
+import handlebars from "express-handlebars";
+import viewsRouter from "./routes/views.router.js";
 import {Server} from "socket.io";
 import ProductManager from "./dao/ProductManager.js";
 import ChatManager from "./dao/ChatManager.js";
@@ -23,17 +21,15 @@ const CM = new ChatManager();
 
 mongoose.connect("mongodb+srv://roberto1608torales:roberto1608@cluster0.ggriuqe.mongodb.net/ecommerce?retryWrites=true&w=majority");
 
+app.engine("handlebars", handlebars.engine());
 app.set("views", __dirname + "/views");
-app.engine('handlebars', expressHandlebars.engine({
-    handlebars: allowInsecurePrototypeAccess(Handlebars)
-}));
 app.set("view engine", "handlebars");
+app.use(express.static(__dirname + "/public"));
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
-app.use(express.static(__dirname + "/public"));
 app.use("/api/products/", productsRouter);
 app.use("/api/carts/", cartsRouter);
-app.use("/", viewRouter);
+app.use("/", viewsRouter);
 
 
 
